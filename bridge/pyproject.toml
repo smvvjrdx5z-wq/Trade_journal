@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mt5-notion-tradejournal"
+version = "1.0.0"
+description = "Sync MetaTrader 5 trades and 4H chart screenshots into a Notion trading journal"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+mt5 = ["MetaTrader5>=5.0.45; sys_platform == 'win32'"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+tradejournal = "tradejournal.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

@@ -1,0 +1,22 @@
+# Secrets and local state
+.env
+bridge_state.json
+*.tmp
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# MetaTrader build output
+*.ex5
+*.ex4
+
+# OS
+.DS_Store
+Thumbs.db
