@@ -24,18 +24,65 @@ returns `object_not_found`, this step was missed or applied to the wrong page.
 
 ## 2. Install the bridge
 
-Python 3.11 or newer is required.
+> **Where do these commands go?** Into **Windows PowerShell**, on the PC that runs
+> MetaTrader 5. Press `Win`, type `powershell`, hit Enter. Paste one block at a
+> time and press Enter. Right-click pastes in a PowerShell window.
 
-```bash
-cd bridge
+### 2a. Install Python
+
+Check whether you already have it:
+
+```powershell
+python --version
+```
+
+If that prints `Python 3.11` or higher, skip ahead. If it errors or opens the
+Microsoft Store, install Python from <https://www.python.org/downloads/> and
+**tick "Add python.exe to PATH"** on the first screen of the installer. Close and
+reopen PowerShell afterwards, then check the version again.
+
+### 2b. Install Git
+
+```powershell
+git --version
+```
+
+If that errors, install it from <https://git-scm.com/download/win> and accept the
+defaults. Reopen PowerShell afterwards.
+
+### 2c. Get the code onto your PC
+
+```powershell
+cd $HOME
+git clone https://github.com/smvvjrdx5z-wq/Trade_journal.git
+cd Trade_journal
+git checkout feat/mt5-notion-journal
+```
+
+That puts the project in `C:\Users\<you>\Trade_journal`.
+
+### 2d. Install the bridge
+
+```powershell
+cd $HOME\Trade_journal\bridge
 python -m pip install -e .
 ```
 
-To also enable the full-history importer:
+To also enable the full-history importer (`tradejournal import`):
 
-```bash
+```powershell
 python -m pip install -e ".[mt5]"
 ```
+
+Confirm it installed:
+
+```powershell
+tradejournal --help
+```
+
+If PowerShell says `tradejournal` is not recognised, use
+`python -m tradejournal.cli` in place of `tradejournal` for every command in this
+guide.
 
 ---
 
@@ -83,11 +130,16 @@ Copy that line into `.env`.
 
 ## 5. Configure the bridge
 
-```bash
-cp .env.example .env
+The bridge reads `.env` from whatever folder you run it in. Run everything from
+`bridge`, so put the file there:
+
+```powershell
+cd $HOME\Trade_journal\bridge
+Copy-Item ..\.env.example .env
+notepad .env
 ```
 
-Then edit `.env`:
+Notepad opens. Fill in these three lines:
 
 ```ini
 NOTION_TOKEN=ntn_your_secret_here
@@ -95,17 +147,24 @@ BRIDGE_SPOOL_DIR=C:\Users\you\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF
 BRIDGE_TIMEZONE=Europe/Berlin
 ```
 
-The six `NOTION_*_DB` IDs are already filled in for your workspace.
+Save and close Notepad.
+
+The six `NOTION_*_DB` IDs are already filled in for your workspace — leave them
+alone. Do not wrap values in quotes, and do not put spaces around the `=`.
 
 `BRIDGE_TIMEZONE` decides which calendar day a trade is journalled under and how
 sessions are labelled. Set it to the timezone you actually trade in, not the
 broker's.
 
+> `.env` holds your Notion secret. It is already in `.gitignore`, so it will
+> never be committed.
+
 ---
 
 ## 6. Verify
 
-```bash
+```powershell
+cd $HOME\Trade_journal\bridge
 tradejournal doctor
 ```
 
@@ -130,21 +189,26 @@ All good.
 
 ## 7. Run
 
-```bash
+```powershell
+cd $HOME\Trade_journal\bridge
 tradejournal watch
 ```
 
-Close a trade and it appears in Notion within a few seconds, screenshot attached.
+Leave that PowerShell window open. Close a trade and it appears in Notion within
+a few seconds, screenshot attached. `Ctrl+C` stops it.
 
 ### Keep it running
 
-Create a Windows Scheduled Task set to **At log on**, running:
+So you do not have to start it by hand, create a Windows Scheduled Task
+(press `Win`, type `Task Scheduler`) set to trigger **At log on**, with:
 
 ```
 Program:   C:\path\to\python.exe
 Arguments: -m tradejournal.cli watch
-Start in:  C:\path\to\Trade_journal\bridge
+Start in:  C:\Users\you\Trade_journal\bridge
 ```
+
+Find the exact Python path with `(Get-Command python).Source`.
 
 Tick **Run whether user is logged on or not** if MT5 runs as a service.
 
@@ -154,7 +218,7 @@ Tick **Run whether user is logged on or not** if MT5 runs as a service.
 
 To pull in everything from before you installed the EA:
 
-```bash
+```powershell
 tradejournal import --days 730
 ```
 

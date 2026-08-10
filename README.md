@@ -27,16 +27,22 @@ MetaTrader 5 (Windows)                    Python bridge                Notion
 
 ## Quick start
 
-```bash
-# 1. Install the bridge (on the Windows PC running MT5)
-cd bridge
+Run these in **Windows PowerShell**, on the PC where MetaTrader 5 is installed.
+Press `Win`, type `powershell`, hit Enter.
+
+```powershell
+# 1. Get the code and install the bridge (needs Python 3.11+ and Git)
+cd $HOME
+git clone https://github.com/smvvjrdx5z-wq/Trade_journal.git
+cd Trade_journal\bridge
 python -m pip install -e .
 
-# 2. Configure
-cp ../.env.example ../.env      # then fill in NOTION_TOKEN and BRIDGE_SPOOL_DIR
+# 2. Configure — then fill in NOTION_TOKEN and BRIDGE_SPOOL_DIR
+Copy-Item ..\.env.example .env
+notepad .env
 
-# 3. Copy the EA and attach it to any one chart in MT5
-#    mql5/Experts/NotionTradeJournal.mq5 -> <terminal>/MQL5/Experts/
+# 3. Copy the EA and attach it to any ONE chart in MT5
+#    mql5\Experts\NotionTradeJournal.mq5 -> <terminal data folder>\MQL5\Experts\
 
 # 4. Check everything is wired up
 tradejournal doctor
