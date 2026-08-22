@@ -59,7 +59,9 @@ cd Trade_journal
 git checkout feat/mt5-notion-journal
 ```
 
-That puts the project in `C:\Users\<you>\Trade_journal`.
+That puts the project in `C:\Users\<you>\Trade_journal`. You can clone it
+anywhere — OneDrive, D:\, wherever. Just use *your* path in place of
+`$HOME\Trade_journal` in the steps below.
 
 ### 2d. Install the bridge
 
@@ -77,12 +79,19 @@ python -m pip install -e ".[mt5]"
 Confirm it installed:
 
 ```powershell
-tradejournal --help
+python -m tradejournal.cli --help
 ```
 
-If PowerShell says `tradejournal` is not recognised, use
-`python -m tradejournal.cli` in place of `tradejournal` for every command in this
-guide.
+That should print the list of commands.
+
+> **Why `python -m tradejournal.cli` and not just `tradejournal`?**
+> pip also installs a `tradejournal.exe` shortcut, but it lands in a `Scripts`
+> folder that Windows often is not searching, giving you
+> *"The term 'tradejournal' is not recognized"*. The `python -m` form always
+> works because it goes through Python itself. Every command below uses it.
+>
+> If you want the short version, see
+> [Using the `tradejournal` shortcut](#using-the-tradejournal-shortcut) at the end.
 
 ---
 
@@ -165,7 +174,7 @@ broker's.
 
 ```powershell
 cd $HOME\Trade_journal\bridge
-tradejournal doctor
+python -m tradejournal.cli doctor
 ```
 
 Expected output:
@@ -191,7 +200,7 @@ All good.
 
 ```powershell
 cd $HOME\Trade_journal\bridge
-tradejournal watch
+python -m tradejournal.cli watch
 ```
 
 Leave that PowerShell window open. Close a trade and it appears in Notion within
@@ -219,7 +228,7 @@ Tick **Run whether user is logged on or not** if MT5 runs as a service.
 To pull in everything from before you installed the EA:
 
 ```powershell
-tradejournal import --days 730
+python -m tradejournal.cli import --days 730
 ```
 
 This reads the terminal's deal history directly. It requires MT5 to be open and
@@ -242,6 +251,11 @@ The position had no stop loss, so there is no initial risk to divide by. The
 bridge falls back to `BRIDGE_DEFAULT_RISK_PCT` of the balance and flags the value
 as estimated in the trade page body.
 
+**`The term 'tradejournal' is not recognized`**
+pip installed the `tradejournal.exe` shortcut into a `Scripts` folder that is not
+on your PATH. Use `python -m tradejournal.cli` instead — it always works. To fix
+the shortcut permanently, see below.
+
 **Duplicate trades**
 More than one chart has the EA attached. Remove all but one.
 
@@ -253,3 +267,41 @@ Experts tab.
 **A trade is missing after the bridge was offline**
 Nothing is lost. Payloads stay in the spool folder until the bridge processes
 them. Start it and they drain automatically.
+
+---
+
+## Using the `tradejournal` shortcut
+
+`python -m tradejournal.cli` is the reliable form and nothing is wrong with using
+it forever. If you would rather type just `tradejournal`, add pip's script folder
+to your PATH.
+
+Find where pip put it:
+
+```powershell
+python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
+python -c "import sysconfig; print(sysconfig.get_path('scripts', 'nt_user'))"
+```
+
+The shortcut is in one of those two — check both for `tradejournal.exe`:
+
+```powershell
+Get-ChildItem (python -c "import sysconfig; print(sysconfig.get_path('scripts'))") -Filter tradejournal*
+```
+
+Add the folder that contains it to your PATH permanently:
+
+```powershell
+$scripts = python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
+[Environment]::SetEnvironmentVariable(
+    "Path",
+    [Environment]::GetEnvironmentVariable("Path", "User") + ";$scripts",
+    "User"
+)
+```
+
+Close and reopen PowerShell, then `tradejournal doctor` will work.
+
+> If `tradejournal.exe` is in neither folder, the install did not complete. Re-run
+> `python -m pip install -e .` from the `bridge` folder and read the output for
+> errors.

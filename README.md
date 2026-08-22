@@ -45,10 +45,10 @@ notepad .env
 #    mql5\Experts\NotionTradeJournal.mq5 -> <terminal data folder>\MQL5\Experts\
 
 # 4. Check everything is wired up
-tradejournal doctor
+python -m tradejournal.cli doctor
 
 # 5. Run it
-tradejournal watch
+python -m tradejournal.cli watch
 ```
 
 Full instructions, including where to find the spool path and how to grant the
@@ -56,13 +56,19 @@ Notion integration access, are in **[docs/SETUP.md](docs/SETUP.md)**.
 
 ## Commands
 
+Run these from the `bridge` folder.
+
 | Command | Purpose |
 |---|---|
-| `tradejournal watch` | Run continuously. Trades appear in Notion seconds after they close. |
-| `tradejournal sync` | Drain the spool once and exit. Good for a scheduled task. |
-| `tradejournal import --days 365` | Backfill closed positions straight from the terminal. Windows only. |
-| `tradejournal refresh` | Recompute the dashboard without syncing anything new. |
-| `tradejournal doctor` | Verify config, spool directory and Notion connectivity. |
+| `python -m tradejournal.cli watch` | Run continuously. Trades appear in Notion seconds after they close. |
+| `python -m tradejournal.cli sync` | Drain the spool once and exit. Good for a scheduled task. |
+| `python -m tradejournal.cli import --days 365` | Backfill closed positions straight from the terminal. Windows only. |
+| `python -m tradejournal.cli refresh` | Recompute the dashboard without syncing anything new. |
+| `python -m tradejournal.cli doctor` | Verify config, spool directory and Notion connectivity. |
+
+A `tradejournal` shortcut is also installed, but pip often puts it somewhere
+Windows is not searching. The `python -m` form always works; see
+[docs/SETUP.md](docs/SETUP.md#using-the-tradejournal-shortcut) to enable the short one.
 
 ## Why an EA *and* a Python bridge
 
