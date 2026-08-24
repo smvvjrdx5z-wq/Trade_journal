@@ -1,5 +1,11 @@
 # MT5 → Notion Trading Journal
 
+> **Also in this repo:** [`journal app/`](journal%20app/README.md) — a standalone
+> web edition of this journal (same trades / daily journal / playbooks / tags /
+> performance model, same scoring math) built on Supabase and deployable on
+> Vercel. Its `/api/ingest` endpoint accepts the same JSON payloads the EA
+> spools, so the bridge can feed both.
+
 A TradeZella-style trading journal that lives in Notion and fills itself in from
 MetaTrader 5. Every closed position arrives with its numbers, its R-multiple, and
 a **4H chart screenshot with the entry, exit, stop and target drawn on it**.
